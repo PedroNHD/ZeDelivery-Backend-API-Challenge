@@ -1,0 +1,16 @@
+generator client {
+  provider    = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Partner {
+  id           String @id @unique @default(cuid())
+  tradingName  String
+  ownerName    String
+  document     String @unique
+  coverageArea Unsupported("geometry(MultiPolygon, 4326)")
+  address      Unsupported("geometry(Point, 4326)")
+}
