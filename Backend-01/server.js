@@ -1,13 +1,8 @@
 import 'dotenv/config';
-import fastify from 'fastify';
-import { errorHandler } from './src/middlewares/ErrorHandler.js';
+import { build } from './app.js';
 
-const app = fastify({ logger: true });
+const app = build({ logger: true });
 const PORT = Number(process.env.PORT) || 3000;
-
-app.register(import('./routes.js'));
-
-app.setErrorHandler(errorHandler);
 
 // Inicializando o servidor.
 const start = async () => {

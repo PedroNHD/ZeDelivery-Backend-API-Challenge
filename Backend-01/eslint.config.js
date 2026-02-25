@@ -5,6 +5,7 @@ import prettierPlugin from 'eslint-plugin-prettier';
 export default [
   js.configs.recommended,
   {
+    ignores: ['**/*.test.js', 'node_modules/**'],
     plugins: {
       prettier: prettierPlugin,
     },
