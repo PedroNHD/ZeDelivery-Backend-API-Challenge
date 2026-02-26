@@ -117,8 +117,19 @@ pnpm test
 
 ---
 
-## 📞 Contato
+## 🤝 Contribuições
 
-**Pedro Domingues**
+Este é um projeto desenvolvido para fins de desafio técnico. No entanto, feedbacks e sugestões são sempre bem-vindos!
+1. Faça um **Fork** do projeto.
+2. Crie uma **Branch** para sua modificação (`git checkout -b feature/nova-feature`).
+3. Faça o **Commit** de suas alterações (`git commit -m 'Adicionando nova feature'`).
+4. Envie para o **Repo** (`git push origin feature/nova-feature`).
+5. Abra um **Pull Request**.
 
-- **LinkedIn**: [https://www.linkedin.com/in/pedro-domingues-horta-neto/](https://www.linkedin.com/in/pedro-domingues-horta-neto/)
+## 📄 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+### Desenvolvido com ☕ por [Pedro Domingues](https://www.linkedin.com/in/pedro-domingues-horta-neto/)
