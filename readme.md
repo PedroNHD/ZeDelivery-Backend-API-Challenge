@@ -1,143 +1,124 @@
-# Zé Code Challenge - Backend API
+<div align="center">
+  <img src="https://img.shields.io/badge/status-Completo-brightgreen" alt="Status Completo">
+  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
+  <img src="https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white" alt="Fastify">
+</div>
 
-Este é um serviço de backend desenvolvido para o Zé Code Challenge. A aplicação gerencia parceiros (PDVs - Pontos de Venda), permitindo seu cadastro e busca por geolocalização.
+<h1 align="center">Zé Code Challenge - Backend API</h1>
 
-## Tecnologias Utilizadas
+## O Desafio Técnico
 
-- **Node.js**: Ambiente de execução do JavaScript no servidor.
-- **Fastify**: Framework web de alta performance para Node.js.
-- **Prisma**: ORM (Object-Relational Mapping) para Node.js e TypeScript.
-- **PostgreSQL**: Banco de dados relacional.
-- **PostGIS**: Extensão do PostgreSQL para suporte a objetos geográficos e consultas espaciais.
-- **pnpm**: Gerenciador de pacotes rápido e eficiente.
-- **Jest**: Framework de testes para JavaScript.
-- **ESLint/Prettier**: Ferramentas para garantir a qualidade e a consistência do código.
+Este projeto resolve um desafio complexo de geoprocessamento utilizando **PostGIS**, a extensão geoespacial para PostgreSQL. A funcionalidade principal consiste em realizar consultas espaciais eficientes para encontrar pontos de venda (PDVs) dentro de áreas de cobertura (multipolígonos).
 
-## Pré-requisitos
+A implementação demonstra um conhecimento avançado em SQL e geoprocessamento, aplicando a função `ST_Intersects` para verificar a intersecção entre a geometria de um ponto (localização do PDV) e as áreas de cobertura armazenadas, garantindo precisão e performance na busca por parceiros.
 
-- Node.js (v18 ou superior)
-- pnpm (ou outro gerenciador de pacotes como npm ou yarn)
-- Docker (recomendado para instanciar o banco de dados PostgreSQL com PostGIS)
+## 🛠️ Tecnologias Utilizadas
 
-## Como Começar
+| Tecnologia     | Finalidade                              |
+| -------------- | --------------------------------------- |
+| **Node.js**    | Ambiente de execução do backend         |
+| **Fastify**    | Framework web focado em performance     |
+| **PostgreSQL** | Banco de dados relacional               |
+| **PostGIS**    | Extensão para consultas geoespaciais    |
+| **Prisma**     | ORM para interação com o banco de dados |
+| **Docker**     | Gerenciamento de contêineres (PostGIS)  |
+| **Jest**       | Testes automatizados                    |
+| **Zod**        | Validação de schemas e dados            |
+| **ESLint**     | Padronização e qualidade de código      |
+| **Prettier**   | Formatação de código                    |
 
-1.  **Clone o repositório:**
+## ✅ Funcionalidades Implementadas
 
-    ```bash
-    git clone https://github.com/PedroNHD/Ze-Code-Challenge---Backend-API.git
-    cd Ze-Code-Challenge---Backend-API/Backend-01
-    ```
+- [x] **Cadastro de PDV**: Criação de novos pontos de venda.
+- [x] **Busca por ID**: Procura um PDV específico pelo seu identificador.
+- [x] **Busca por Localização**: Encontra o PDV mais próximo de uma coordenada (longitude/latitude).
+- [x] **Seed**: Script para popular o banco de dados com dados iniciais.
+- [x] **Linting**: Ferramentas de análise estática para garantir a qualidade do código.
 
-2.  **Instale as dependências:**
+## 🧠 Aprendizados & Desafios
 
-    ```bash
-    pnpm install
-    ```
+- **Integração Prisma & PostGIS**: Um dos maiores desafios foi fazer o Prisma ORM, que não tem suporte nativo para os tipos de dados geométricos do PostGIS, funcionar corretamente. Isso exigiu uma pesquisa aprofundada na documentação e a implementação de queries nativas (`$queryRaw`) para manipular geometrias, um aprendizado que uniu a abstração do ORM com a flexibilidade do SQL puro.
 
-3.  **Configure as variáveis de ambiente:**
-    Crie um arquivo `.env` na raiz da pasta `Backend-01`, utilizando o `.env.example` como referência. Você precisará configurar a `DATABASE_URL` para a conexão com o banco de dados.
+- **Infraestrutura como Código**: Minha experiência prévia em Suporte de TI foi fundamental para configurar o ambiente de desenvolvimento com Docker. A habilidade de diagnosticar e resolver problemas de rede e de contêineres permitiu criar uma infraestrutura resiliente e facilmente replicável.
 
-    ```env
-    # URL de conexão com o banco de dados PostgreSQL com PostGIS
-    DATABASE_URL="postgresql://user:password@localhost:5432/mydatabase?schema=public"
-    ```
+- **Consistência de Código**: A adoção de ESLint e Prettier desde o início do projeto foi crucial para manter a consistência e a legibilidade do código. Em um sistema com integrações complexas, ter um padrão de código bem definido evitou bugs e facilitou a manutenção.
 
-4.  **Execute as migrações do banco de dados:**
-    O Prisma utilizará o schema definido em `prisma/schema.prisma` para criar as tabelas necessárias.
+- **Consultas Espaciais**: O estudo e a aplicação de consultas espaciais, especialmente com `ST_Intersects`, foram um grande aprendizado. Entender como o banco de dados pode ir além do armazenamento de dados tabulares e se tornar uma ferramenta poderosa para análises geoespaciais expandiu minha visão sobre o potencial dos bancos de dados relacionais.
 
-    ```bash
-    npx prisma migrate dev
-    ```
+## 🚀 Como Executar o Projeto
 
-5.  **Popule o banco de dados (Opcional):**
-    Para carregar os dados iniciais de PDVs a partir do arquivo `data/pdvs.json`, execute o script de seed.
+Siga os passos abaixo para configurar e executar a aplicação em seu ambiente local.
 
-    ```bash
-    pnpm run seed
-    ```
+### 1. Pré-requisitos
 
-6.  **Inicie o servidor de desenvolvimento:**
-    O servidor iniciará em modo de desenvolvimento com hot-reload.
-    ```bash
-    pnpm run dev
-    ```
-    A aplicação estará disponível em `http://localhost:3000`.
+- [Node.js](https://nodejs.org/en/) (v18 ou superior)
+- [Docker](https://www.docker.com/get-started/) e Docker Compose
+- [PNPM](https://pnpm.io/installation) (ou outro gerenciador de pacotes)
 
-## Scripts Disponíveis
+### 2. Instalação
 
-- `pnpm start`: Inicia a aplicação em modo de produção.
-- `pnpm dev`: Inicia a aplicação em modo de desenvolvimento com `nodemon`.
-- `pnpm test`: Executa os testes da aplicação.
-- `pnpm run seed`: Popula o banco de dados com os dados do arquivo `data/pdvs.json`.
+Clone o repositório e instale as dependências:
 
-## Rodando os Testes
+```bash
+git clone https://github.com/PedroNHD/ZeDelivery-Backend-API-Challenge.git
+cd "Ze Code Challenge - Backend API/Backend-01"
+pnpm install
+```
 
-Para executar a suíte de testes, utilize o seguinte comando:
+### 3. Configuração do Ambiente
+
+Crie o arquivo de variáveis de ambiente a partir do exemplo e preencha com suas credenciais do banco de dados:
+
+```bash
+cp .env.example .env
+```
+
+O arquivo `.env` deve ter a seguinte estrutura:
+
+```env
+# PostgreSQL connection string (com PostGIS)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+```
+
+### 4. Subir o Banco de Dados com Docker
+
+Inicie o contêiner do PostGIS usando Docker Compose:
+
+```bash
+docker-compose up -d
+```
+
+### 5. Migrações e Seed do Banco
+
+Aplique as migrações do Prisma e popule o banco de dados com os dados iniciais:
+
+```bash
+pnpm prisma migrate dev
+pnpm run seed
+```
+
+### 6. Executando a Aplicação
+
+Inicie o servidor de desenvolvimento:
+
+```bash
+pnpm dev
+```
+
+A API estará disponível em `http://localhost:3000`.
+
+### 7. Executando os Testes
+
+Para rodar os testes automatizados, utilize o comando:
 
 ```bash
 pnpm test
 ```
 
-Os testes verificam os endpoints da API e a lógica de negócio, garantindo a integridade da aplicação.
+---
 
-## Endpoints da API
+## 📞 Contato
 
-A API expõe os seguintes endpoints:
+**Pedro Domingues**
 
-### `POST /partners`
-
-Cria um novo parceiro (PDV) no banco de dados.
-
-- **Body (raw JSON):**
-  ```json
-  {
-    "id": 1,
-    "tradingName": "Adega da Cerveja - Unidade Pinheiros",
-    "ownerName": "Zé da Silva",
-    "document": "14.321.321/0001-10",
-    "coverageArea": {
-      "type": "MultiPolygon",
-      "coordinates": [
-        [
-          [
-            [30, 20],
-            [45, 40],
-            [10, 40],
-            [30, 20]
-          ]
-        ],
-        [
-          [
-            [15, 5],
-            [40, 10],
-            [10, 20],
-            [5, 10],
-            [15, 5]
-          ]
-        ]
-      ]
-    },
-    "address": {
-      "type": "Point",
-      "coordinates": [-46.57421, -21.785741]
-    }
-  }
-  ```
-
-### `GET /partners/:id`
-
-Busca um parceiro específico pelo seu `id`.
-
-- **Parâmetros da URL:**
-  - `id` (string): O ID único do parceiro.
-
-### `GET /partners/search`
-
-Busca o parceiro com a área de cobertura (`coverageArea`) mais próxima que abranja uma determinada localização (longitude e latitude).
-
-- **Query Parameters:**
-  - `long` (number/string): Longitude do ponto a ser verificado.
-  - `lat` (number/string): Latitude do ponto a ser verificado.
-  - `limit` (number/string): Número máximo de resultados a serem retornados. (Opcional)
-- **Exemplo:**
-  `/partners/search?long=-46.57421&lat=-21.785741`
+- **LinkedIn**: [https://www.linkedin.com/in/pedro-domingues-horta-neto/](https://www.linkedin.com/in/pedro-domingues-horta-neto/)

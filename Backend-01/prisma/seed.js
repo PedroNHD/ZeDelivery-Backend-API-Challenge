@@ -1,6 +1,6 @@
 /* eslint-disable no-sync */
 /* eslint-disable no-console */
-/* eslint-disable no-undef */
+ 
 import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import 'dotenv/config';

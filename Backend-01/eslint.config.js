@@ -1,10 +1,16 @@
 import js from '@eslint/js';
 import prettier from 'eslint-config-prettier';
 import prettierPlugin from 'eslint-plugin-prettier';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
   {
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+    },
     ignores: ['**/*.test.js', 'node_modules/**'],
     plugins: {
       prettier: prettierPlugin,

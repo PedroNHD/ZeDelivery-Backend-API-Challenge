@@ -3,10 +3,14 @@ import {
   getPartnerByIdController,
   searchPartnerController,
 } from './partner.controller.js';
-import { partnerSchema } from './partner.schema.js';
+import {
+  createPartnerSchema,
+  getPartnerByIdSchema,
+  searchPartnerSchema,
+} from './partner.schema.js';
 
 export default function partnerRoutes(app) {
-  app.post('/partners', { schema: partnerSchema }, createPartnerController);
-  app.get('/partners/:id', getPartnerByIdController);
-  app.get('/partners/search', searchPartnerController);
+  app.post('/partners', { schema: createPartnerSchema }, createPartnerController);
+  app.get('/partners/:id', { schema: getPartnerByIdSchema }, getPartnerByIdController);
+  app.get('/partners/search', { schema: searchPartnerSchema }, searchPartnerController);
 }
