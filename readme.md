@@ -1,10 +1,19 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/status-Completo-brightgreen" alt="Status Completo">
-  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
-  <img src="https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white" alt="Fastify">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=339933&height=150&section=header&text=🍺%20Zé%20Code%20Challenge&fontSize=40&animation=fadeIn" />
+  
+  <p align="center">
+    <img src="https://img.shields.io/badge/status-Completo-brightgreen" alt="Status Completo">
+    <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
+    <img src="https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white" alt="Fastify">
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Localização-Brasil-blue?style=flat-square&logo=googlemaps&logoColor=white" />
+    <img src="https://img.shields.io/badge/Idiomas-PT--BR%20%7C%20EN--US-lightgrey?style=flat-square" />
+  </p>
 </div>
 
-<h1 align="center">Zé Code Challenge - Backend API</h1>
+---
 
 ## O Desafio Técnico
 
