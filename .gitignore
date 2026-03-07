@@ -6,3 +6,6 @@ node_modules
 
 # IDE files
 .vscode/
+
+# Docker files
+docker-compose.yml

@@ -9,7 +9,8 @@
     "dev": "nodemon server.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "seed": "node src/scripts/seed.js"
   },
   "keywords": [],
   "author": "",

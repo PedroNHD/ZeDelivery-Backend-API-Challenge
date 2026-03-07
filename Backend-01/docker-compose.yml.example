@@ -1,0 +1,24 @@
+services:
+  oracle-db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-db-ze
+    restart: always
+    ports:
+      - '${DB_PORT}:1521'
+    environment:
+      - ORACLE_PASSWORD=${DB_ADMIN_PASSWORD}
+      - APP_USER=${DB_USER}
+      - APP_PASSWORD=${DB_PASSWORD}
+      - ORACLE_CHARACTERSET=AL32UTF8
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./src/scripts/setup-users.sh:/opt/oracle/scripts/startup/setup-users.sh
+    healthcheck:
+      test: ['CMD-SHELL', '/opt/oracle/checkDBStatus.sh']
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  oracle-data:

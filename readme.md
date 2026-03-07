@@ -14,6 +14,7 @@
     <img src="https://img.shields.io/badge/status-Completo-brightgreen" alt="Status Completo">
     <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
     <img src="https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white" alt="Fastify">
+    <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white" alt="Oracle">
   </p>
 
   <p align="center">
@@ -24,42 +25,31 @@
 
 ### O Desafio Técnico
 
-Este projeto resolve um desafio complexo de geoprocessamento utilizando **PostGIS**, a extensão geoespacial para PostgreSQL. A funcionalidade principal consiste em realizar consultas espaciais eficientes para encontrar pontos de venda (PDVs) dentro de áreas de cobertura (multipolígonos).
+Este projeto resolve um desafio complexo de geoprocessamento. A funcionalidade principal consiste em realizar consultas espaciais eficientes para encontrar pontos de venda (PDVs) dentro de áreas de cobertura (multipolígonos) e o mais próximo de uma determinada localização.
 
-A implementação demonstra um conhecimento avançado em SQL e geoprocessamento, aplicando a função `ST_Intersects` para verificar a intersecção entre a geometria de um ponto (localização do PDV) e as áreas de cobertura armazenadas, garantindo precisão e performance na busca por parceiros.
+A implementação utiliza **Oracle Database** com suas capacidades espaciais e **TypeORM** para o mapeamento objeto-relacional. As consultas demonstram a aplicação de funções geoespaciais para garantir precisão e performance na busca por parceiros.
 
 ### 🛠️ Tecnologias Utilizadas
 
-| Tecnologia     | Finalidade                              |
-| -------------- | --------------------------------------- |
-| **Node.js**    | Ambiente de execução do backend         |
-| **Fastify**    | Framework web focado em performance     |
-| **PostgreSQL** | Banco de dados relacional               |
-| **PostGIS**    | Extensão para consultas geoespaciais    |
-| **Prisma**     | ORM para interação com o banco de dados |
-| **Docker**     | Gerenciamento de contêineres (PostGIS)  |
-| **Jest**       | Testes automatizados                    |
-| **Zod**        | Validação de schemas e dados            |
-| **ESLint**     | Padronização e qualidade de código      |
-| **Prettier**   | Formatação de código                    |
+| Tecnologia | Finalidade |
+| --- | --- |
+| **Node.js** | Ambiente de execução do backend |
+| **Fastify** | Framework web focado em performance |
+| **Oracle Database** | Banco de dados relacional com suporte espacial |
+| **TypeORM** | ORM para interação com o banco de dados |
+| **Docker** | Gerenciamento de contêineres (Oracle DB) |
+| **Jest** | Testes automatizados |
+| **Zod** | Validação de schemas e dados |
+| **ESLint** | Padronização e qualidade de código |
+| **Prettier** | Formatação de código |
 
 ### ✅ Funcionalidades Implementadas
 
 - [x] **Cadastro de PDV**: Criação de novos pontos de venda.
 - [x] **Busca por ID**: Procura um PDV específico pelo seu identificador.
 - [x] **Busca por Localização**: Encontra o PDV mais próximo de uma coordenada (longitude/latitude).
-- [x] **Seed**: Script para popular o banco de dados com dados iniciais.
+- [x] **Seed**: Script para popular o banco de dados com dados iniciais e criar o usuário da aplicação.
 - [x] **Linting**: Ferramentas de análise estática para garantir a qualidade do código.
-
-### 🧠 Aprendizados & Desafios
-
-- **Integração Prisma & PostGIS**: Um dos maiores desafios foi fazer o Prisma ORM, que não tem suporte nativo para os tipos de dados geométricos do PostGIS, funcionar corretamente. Isso exigiu uma pesquisa aprofundada na documentação e a implementação de queries nativas (`$queryRaw`) para manipular geometrias, um aprendizado que uniu a abstração do ORM com a flexibilidade do SQL puro.
-
-- **Infraestrutura como Código**: Minha experiência prévia em Suporte de TI foi fundamental para configurar o ambiente de desenvolvimento com Docker. A habilidade de diagnosticar e resolver problemas de rede e de contêineres permitiu criar uma infraestrutura resiliente e facilmente replicável.
-
-- **Consistência de Código**: A adoção de ESLint e Prettier desde o início do projeto foi crucial para manter a consistência e a legibilidade do código. Em um sistema com integrações complexas, ter um padrão de código bem definido evitou bugs e facilitou a manutenção.
-
-- **Consultas Espaciais**: O estudo e a aplicação de consultas espaciais, especialmente com `ST_Intersects`, foram um grande aprendizado. Entender como o banco de dados pode ir além do armazenamento de dados tabulares e se tornar uma ferramenta poderosa para análises geoespaciais expandiu minha visão sobre o potencial dos bancos de dados relacionais.
 
 ### 🚀 Como Executar o Projeto
 
@@ -83,7 +73,7 @@ pnpm install
 
 #### 3. Configuração do Ambiente
 
-Crie o arquivo de variáveis de ambiente a partir do exemplo e preencha com suas credenciais do banco de dados:
+Crie o arquivo de variáveis de ambiente a partir do exemplo e preencha com as credenciais do banco de dados que deseja criar:
 
 ```bash
 cp .env.example .env
@@ -92,25 +82,33 @@ cp .env.example .env
 O arquivo `.env` deve ter a seguinte estrutura:
 
 ```env
-# PostgreSQL connection string (com PostGIS)
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+DB_HOST=localhost
+DB_PORT=1521
+DB_USER=myuser
+DB_PASSWORD=myuserpassword
+DB_ADMIN_PASSWORD=sua_senha_segura
+DB_SERVICE_NAME=FREEPDB1
 ```
 
 #### 4. Subir o Banco de Dados com Docker
 
-Inicie o contêiner do PostGIS usando Docker Compose:
+Inicie o contêiner do Oracle Database usando Docker Compose. O Docker Compose irá configurar a senha do usuário `SYSTEM` do banco de dados usando o valor da variável `DB_ADMIN_PASSWORD` do seu arquivo `.env`. Certifique-se de que esta variável esteja definida.
 
 ```bash
 docker-compose up -d
 ```
 
-#### 5. Migrações e Seed do Banco
+Aguarde alguns minutos para o banco de dados ser inicializado completamente. Você pode verificar os logs com `docker-compose logs -f oracle-db`. O banco estará pronto quando a mensagem "DATABASE IS READY TO USE!" aparecer.
 
-Aplique as migrações do Prisma e popule o banco de dados com os dados iniciais:
+#### 5. Criando o Usuário e Populando o Banco (Seed)
+
+Execute o script de seed. Este comando irá:
+1. Conectar-se ao banco como usuário `SYSTEM`.
+2. Criar um novo usuário e senha com as credenciais definidas no seu arquivo `.env`.
+3. Popular o banco de dados com os dados do arquivo `pdvs.json`.
 
 ```bash
-npx prisma migrate dev
-pnpm run seed
+pnpm seed
 ```
 
 #### 6. Executando a Aplicação
@@ -140,6 +138,7 @@ pnpm test
     <img src="https://img.shields.io/badge/status-Completed-brightgreen" alt="Status Completed">
     <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js">
     <img src="https://img.shields.io/badge/fastify-%23000000.svg?style=for-the-badge&logo=fastify&logoColor=white" alt="Fastify">
+    <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white" alt="Oracle">
   </p>
 
   <p align="center">
@@ -150,42 +149,31 @@ pnpm test
 
 ### The Technical Challenge
 
-This project solves a complex geoprocessing challenge using **PostGIS**, the spatial extension for PostgreSQL. The main functionality consists of performing efficient spatial queries to find Points of Sale (PoS) within coverage areas (multipolygons).
+This project solves a complex geoprocessing challenge. The main functionality is to perform efficient spatial queries to find Points of Sale (PoS) within coverage areas (multipolygons) and the one closest to a given location.
 
-The implementation demonstrates advanced knowledge in SQL and geoprocessing, applying the `ST_Intersects` function to check for intersection between the geometry of a point (PoS location) and the stored coverage areas, ensuring accuracy and performance in partner searches.
+The implementation uses **Oracle Database** with its spatial capabilities and **TypeORM** for object-relational mapping. The queries demonstrate the application of geospatial functions to ensure accuracy and performance in partner searches.
 
 ### 🛠️ Technologies Used
 
-| Technology     | Purpose                           |
-| -------------- | --------------------------------- |
-| **Node.js**    | Backend runtime environment       |
-| **Fastify**    | Performance-focused web framework |
-| **PostgreSQL** | Relational database               |
-| **PostGIS**    | Extension for geospatial queries  |
-| **Prisma**     | ORM for database interaction      |
-| **Docker**     | Container management (PostGIS)    |
-| **Jest**       | Automated tests                   |
-| **Zod**        | Schema and data validation        |
-| **ESLint**     | Code standardization and quality  |
-| **Prettier**   | Code formatting                   |
+| Technology | Purpose |
+| --- | --- |
+| **Node.js** | Backend runtime environment |
+| **Fastify** | Performance-focused web framework |
+| **Oracle Database** | Relational database with spatial support |
+| **TypeORM** | ORM for database interaction |
+| **Docker** | Container management (Oracle DB) |
+| **Jest** | Automated tests |
+| **Zod** | Schema and data validation |
+| **ESLint** | Code standardization and quality |
+| **Prettier** | Code formatting |
 
 ### ✅ Implemented Features
 
 - [x] **PoS Registration**: Create new Points of Sale.
 - [x] **Search by ID**: Find a specific PoS by its identifier.
 - [x] **Search by Location**: Find the nearest PoS to a given coordinate (longitude/latitude).
-- [x] **Seed**: Script to populate the database with initial data.
+- [x] **Seed**: Script to populate the database with initial data and create the application user.
 - [x] **Linting**: Static analysis tools to ensure code quality.
-
-### 🧠 Lessons Learned & Challenges
-
-- **Prisma & PostGIS Integration**: One of the biggest challenges was making the Prisma ORM, which lacks native support for PostGIS geometric data types, work correctly. This required in-depth research of the documentation and implementing raw queries (`$queryRaw`) to handle geometries. This experience bridged the gap between the ORM's abstraction and the flexibility of pure SQL, marking a significant step in my transition from **IT Support to Backend Developer**.
-
-- **Infrastructure as Code**: My previous experience in IT Support was fundamental in setting up the development environment with Docker. The ability to diagnose and resolve network and container issues allowed me to create a resilient and easily replicable infrastructure.
-
-- **Code Consistency**: Adopting ESLint and Prettier from the start was crucial for maintaining code consistency and readability. In a system with complex integrations, a well-defined code standard prevented bugs and facilitated maintenance.
-
-- **Spatial Queries**: Studying and applying spatial queries, especially with `ST_Intersects`, was a major learning experience. Understanding how a database can go beyond storing tabular data and become a powerful tool for geospatial analysis expanded my view on the potential of relational databases.
 
 ### 🚀 How to Run the Project
 
@@ -209,7 +197,7 @@ pnpm install
 
 #### 3. Environment Setup
 
-Create the environment variables file from the example and fill it with your database credentials:
+Create the environment variables file from the example and fill it with the database credentials you want to create:
 
 ```bash
 cp .env.example .env
@@ -218,25 +206,33 @@ cp .env.example .env
 The `.env` file should have the following structure:
 
 ```env
-# PostgreSQL connection string (with PostGIS)
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE?schema=public"
+DB_HOST=localhost
+DB_PORT=1521
+DB_USER=myuser
+DB_PASSWORD=myuserpassword
+DB_ADMIN_PASSWORD=your_secure_password
+DB_SERVICE_NAME=FREEPDB1
 ```
 
 #### 4. Start the Database with Docker
 
-Start the PostGIS container using Docker Compose:
+Start the Oracle Database container using Docker Compose. Docker Compose will configure the database `SYSTEM` user password using the value from the `DB_ADMIN_PASSWORD` variable in your `.env` file. Make sure this variable is set.
 
 ```bash
 docker-compose up -d
 ```
 
-#### 5. Database Migrations and Seed
+Wait a few minutes for the database to initialize completely. You can check the logs with `docker-compose logs -f oracle-db`. The database is ready when the message "DATABASE IS READY TO USE!" appears.
 
-Apply the Prisma migrations and populate the database with the initial data:
+#### 5. Creating the User and Populating the Database (Seed)
+
+Run the seed script. This command will:
+1. Connect to the database as the `SYSTEM` user.
+2. Create a new user and password with the credentials defined in your `.env` file.
+3. Populate the database with data from the `pdvs.json` file.
 
 ```bash
-pnpm prisma migrate dev
-pnpm run seed
+pnpm seed
 ```
 
 #### 6. Running the Application
