@@ -10,16 +10,12 @@ export const createPartnerService = async data => {
 
   if (!finalId) {
     const lastPartner = await searchLastPartnerRepository();
-    finalId = lastPartner ? parseInt(lastPartner.id) + 1 : 1;
+    finalId = lastPartner ? Number(lastPartner.id) + 1 : 1;
   }
 
   return createPartnerRepository({
-    id: String(finalId),
-    tradingName: data.tradingName,
-    ownerName: data.ownerName,
-    document: data.document,
-    coverageArea: data.coverageArea,
-    address: data.address,
+    ...data,
+    id: finalId, // Ensure ID is a number
   });
 };
 

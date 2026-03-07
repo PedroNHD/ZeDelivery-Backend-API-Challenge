@@ -1,91 +1,62 @@
-import { prisma } from '../../lib/prisma.js';
+import { AppDataSource } from '../../lib/data-source.js';
+import { PartnerSchema } from './partner.entity.js';
+
+const partnerRepository = AppDataSource.getRepository(PartnerSchema);
 
 export const createPartnerRepository = async partnerData => {
-  const result = await prisma.$queryRaw`
-    INSERT INTO "Partner" (
-      "id",
-      "tradingName",
-      "ownerName",
-      "document",
-      "coverageArea",
-      "address"
-    ) VALUES (
-      ${partnerData.id},
-      ${partnerData.tradingName},
-      ${partnerData.ownerName},
-      ${partnerData.document},
-      ST_SetSRID(
-        ST_GeomFromGeoJSON(${JSON.stringify(partnerData.coverageArea)}),
-        4326
-      ),
-      ST_SetSRID(
-        ST_GeomFromGeoJSON(${JSON.stringify(partnerData.address)}),
-        4326
-      )
-    )
-    ON CONFLICT DO NOTHING
-    RETURNING
-      "id",
-      "tradingName",
-      "ownerName",
-      "document",
-      ST_AsGeoJSON("coverageArea")::json AS "coverageArea",
-      ST_AsGeoJSON("address")::json AS "address"
-  `;
-
-  if (result.length === 0) {
-    throw new Error('Não foi possível criar o parceiro.'); // Indica que o parceiro não foi criado (possível conflito de documento)
+  try {
+    const result = await partnerRepository.insert(partnerData);
+    return partnerRepository.findOneBy({ id: result.identifiers[0].id });
+  } catch (error) {
+    if (error.code === 'ER_DUP_ENTRY' || error.message.includes('ORA-00001')) {
+      throw new Error('Não foi possível criar o parceiro. O documento já existe.', { cause: error });
+    }
+    throw error;
   }
-
-  return result[0];
 };
 
 export const getPartnerByIdRepository = async id => {
-  const result = await prisma.$queryRaw`
-    SELECT
-      "id",
-      "tradingName",
-      "ownerName",
-      "document",
-      ST_AsGeoJSON("coverageArea")::json AS "coverageArea",
-      ST_AsGeoJSON("address")::json AS "address"
-    FROM "Partner"
-    WHERE "id" = ${id}
-  `;
-
-  if (result.length === 0) {
-    throw new Error('Parceiro não encontrado.'); // Indica que o parceiro não foi encontrado
+  const partner = await partnerRepository.findOneBy({ id });
+  if (!partner) {
+    throw new Error('Parceiro não encontrado.');
   }
-
-  return result[0];
+  return partner;
 };
 
 export const searchPartnersByLocationRepository = (lat, long) => {
-  return prisma.$queryRaw`
-    SELECT
-      id,
-      "tradingName",
-      "ownerName",
-      document,
-      ST_AsGeoJSON("coverageArea") as "coverageArea",
-      ST_AsGeoJSON("address") as "address",
-      ST_Distance(
-        "address"::geography,
-        ST_SetSRID(ST_Point(${long}, ${lat}), 4326)::geography
-      ) as distance
-    FROM "Partner"
-    WHERE ST_Contains(
-      "coverageArea",
-      ST_SetSRID(ST_Point(${long}, ${lat}), 4326)
+  const point = {
+    type: 'Point',
+    coordinates: [long, lat],
+  };
+
+  // Using QueryBuilder for complex spatial query in Oracle
+  return partnerRepository
+    .createQueryBuilder('partner')
+    .where(
+      `SDO_RELATE(
+        partner.coverageArea,
+        SDO_GEOMETRY(:point, 4326),
+        'mask=CONTAINS'
+      ) = 'TRUE'`,
+      { point: JSON.stringify(point) },
     )
-    ORDER BY distance ASC
-  `;
+    .orderBy(
+      `SDO_GEOM.SDO_DISTANCE(
+        partner.address,
+        SDO_GEOMETRY(:point, 4326),
+        0.005,
+        'unit=M'
+      )`,
+    )
+    .getMany();
 };
 
-export const searchLastPartnerRepository = () => {
-  return prisma.partner.findFirst({
-    orderBy: {
-      id: 'desc',
+export const searchLastPartnerRepository = async () => {
+  const partners = await partnerRepository.find({
+    order: {
+      id: 'DESC',
     },
+    take: 1,
   });
+  return partners[0];
 };

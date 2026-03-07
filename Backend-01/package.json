@@ -7,7 +7,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "seed": "pnpm prisma db seed",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
@@ -27,15 +26,16 @@
     "jest": "^30.2.0",
     "nodemon": "^3.1.11",
     "prettier": "^3.8.1",
-    "prisma": "^7.4.0",
     "supertest": "^7.2.2"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.4.0",
-    "@prisma/client": "^7.4.0",
     "dotenv": "^17.3.1",
     "fastify": "^5.7.4",
     "fs": "0.0.1-security",
+    "oracledb": "^6.10.0",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.28",
+    "typeorm-spatial": "^0.2.8",
     "zod": "^4.3.6"
   }
 }
