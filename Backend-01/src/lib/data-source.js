@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { PartnerSchema } from '../modules/partner/partner.entity.js';
+import { PartnerSchema } from '../schemas/partner.entity.js';
 import 'dotenv/config';
 
 export const AppDataSource = new DataSource({
@@ -11,6 +11,11 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD,
   serviceName: process.env.DB_SERVICE_NAME,
   entities: [PartnerSchema],
-  synchronize: true,
-  logging: true,
+  synchronize: false,
+  logging: process.env.DB_LOGGING === 'dev',
+  extra: {
+    poolMin: 2,
+    poolMax: 10,
+    poolIncrement: 1,
+  },
 });

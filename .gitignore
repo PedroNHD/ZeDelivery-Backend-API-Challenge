@@ -1,11 +1,28 @@
-# Dependencies
-node_modules
 
-# Environment variables
+# Arquivos de ambiente
 .env
 
-# IDE files
-.vscode/
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# Docker files
-docker-compose.yml
+# Diretório de dependências
+node_modules
+
+# Outros
+.DS_Store
+dist
+coverage
+.nyc_output
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

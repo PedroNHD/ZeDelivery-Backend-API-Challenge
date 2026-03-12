@@ -1,5 +1,4 @@
 export function errorHandler(error, request, reply) {
-  // Erro de JSON malformado
   if (error.code === 'FST_ERR_CTP_INVALID_JSON_BODY') {
     return reply.status(400).send({
       status: 'Erro de Sintaxe',
@@ -8,13 +7,14 @@ export function errorHandler(error, request, reply) {
     });
   }
 
-  // Erro de Validação de Schema
   if (error.validation) {
     const formattedErrors = error.validation.map(err => {
+      const campo = err.path ? err.path.join('.') : 'desconhecido';
+
       return {
-        campo: err.instancePath.replace('/', '') || err.params.missingProperty,
+        campo,
         mensagem: err.message,
-        regra: err.keyword,
+        regra: err.code || 'validacao_invalida',
       };
     });
 
@@ -25,9 +25,12 @@ export function errorHandler(error, request, reply) {
     });
   }
 
-  // Para outros erros (500, etc), mantém o padrão ou personaliza
-  return reply.status(500).send({
-    status: 'Erro Interno do Servidor',
-    mensagem: 'Ocorreu um erro interno no servidor.',
+  request.log.error(error);
+
+  const statusCode = error.statusCode || 500;
+
+  return reply.status(statusCode).send({
+    status: statusCode === 500 ? 'Erro Interno do Servidor' : 'Erro',
+    mensagem: statusCode === 500 ? 'Ocorreu um erro interno no servidor.' : error.message,
   });
 }

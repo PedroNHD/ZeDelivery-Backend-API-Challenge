@@ -6,29 +6,34 @@ import {
 } from './partner.repository.js';
 
 export const createPartnerService = async data => {
-  let finalId = data.id;
+  let nextId = data.id;
 
-  if (!finalId) {
+  if (!nextId) {
     const lastPartner = await searchLastPartnerRepository();
-    finalId = lastPartner ? Number(lastPartner.id) + 1 : 1;
+    const parseId = lastPartner?.id ? Number(lastPartner.id) : 0;
+    nextId = (isNaN(parseId) ? 0 : parseId) + 1;
   }
 
   return createPartnerRepository({
     ...data,
-    id: finalId, // Ensure ID is a number
+    id: nextId,
   });
 };
 
 export const searchPartnersByLocationService = query => {
   const { lat, long } = query;
 
-  if (!lat || !long) {
-    throw new Error('Latitude e Longitude são obrigatórios.');
+  if (lat === undefined || lat === null || long === undefined || long === null) {
+    throw new Error('Latitude e Longitude são obrigatórias.');
   }
 
   return searchPartnersByLocationRepository(lat, long);
 };
 
-export const getPartnerByIdService = id => {
+export const getPartnerByIdService = async id => {
+  if (!id) {
+    throw new Error('O ID do parceiro é obrigatório para a busca.');
+  }
+
   return getPartnerByIdRepository(id);
 };
